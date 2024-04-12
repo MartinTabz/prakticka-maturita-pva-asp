@@ -10,6 +10,6 @@ namespace Maturita.Data
         { 
             
         }
-        // public DbSet<Priklad> Priklady { get; set; }
+        public DbSet<Poznamka> Poznamky { get; set; }
     }
 }
