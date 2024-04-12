@@ -1,4 +1,4 @@
-using Maturita.Data;
+﻿using Maturita.Data;
 using Maturita.Models;
 using Maturita.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -73,6 +73,24 @@ namespace Maturita.Controllers
             };
 
             await _context.AddAsync(poznamka);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Poznamky");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Vymazat(int id)
+        {
+            var note = await _context.Poznamky
+              .Where(n => n.Id == id && n.UzivatelId == _userManager.GetUserId(User))
+              .FirstOrDefaultAsync();
+
+            if (note == null)
+            {
+                return NotFound();
+            }
+
+            _context.Poznamky.Remove(note);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Poznamky");
