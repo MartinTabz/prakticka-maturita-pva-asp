@@ -118,5 +118,47 @@ namespace Maturita.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Smazat(SmazatUcetViewModel smazatUcetViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(smazatUcetViewModel);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Prihlasit", "Profil");
+            }
+
+            var passwordCheck = await _userManager.CheckPasswordAsync(user, smazatUcetViewModel.Password);
+
+            if (passwordCheck)
+            {
+                try
+                {
+                    var notesToDelete = await _context.Poznamky.Where(n => n.UzivatelId == user.Id).ToListAsync();
+                    _context.Poznamky.RemoveRange(notesToDelete);
+                    await _context.SaveChangesAsync();
+
+                    await _userManager.DeleteAsync(user);
+
+                    await _signInManager.SignOutAsync();
+
+                    return RedirectToAction("Index", "Home");
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = "Došlo k chybě při mazání účtu: " + ex.Message;
+                    return View(smazatUcetViewModel);
+                }
+            }
+
+            TempData["Error"] = "Špatné heslo";
+            return View("Index");
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Maturita.ViewModels
+@model SmazatUcetViewModel
+@{
     ViewData["Title"] = "Profil";
 }
 
@@ -8,5 +10,30 @@
             <h1>Profil</h1>
             <h2>Vítej @User.Identity.Name</h2>
         </p>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="col-md-12 alert alert-danger">
+                <span><b>Něco se pokazilo!</b> - @TempData["Error"] </span>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-8 offset-2">
+                <form asp-controller="Profil" asp-action="Smazat" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Password" class="control-label"></label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input class="btn btn-outline-success float-right" type="submit" value="Odstranit účet" />
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
